@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Международный фиксированный календарь</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Конвертер дат между григорианским, юлианским и Международным фиксированным календарём (МФК).">
+<meta name="theme-color" content="#2f6f5e">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--tx:#1d2330;--mu:#6b7280;--ac:#2f6f5e;--ac2:#e8f2ee;--bd:#e2ded4;--hol:#c2410c;--sel:#2f6f5e;--selt:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1a2029;--tx:#e8eaee;--mu:#98a1b0;--ac:#5fb59c;--ac2:#1f2e2a;--bd:#2b3442;--hol:#fb923c;--sel:#5fb59c;--selt:#0f1713}}
+:root[data-theme="dark"]{--bg:#12161c;--card:#1a2029;--tx:#e8eaee;--mu:#98a1b0;--ac:#5fb59c;--ac2:#1f2e2a;--bd:#2b3442;--hol:#fb923c;--sel:#5fb59c;--selt:#0f1713}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.w{max-width:960px;margin:0 auto;padding:16px}
+header{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:1.3rem;margin:0}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button,select,input{font:inherit;color:var(--tx)}
+.b{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:7px 12px;cursor:pointer}
+.b:hover{border-color:var(--ac)}
+.b:focus-visible,.go:focus-visible,.seg button:focus-visible,.cal button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.g{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media(max-width:720px){.g{grid-template-columns:1fr}}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+.g .c{margin-bottom:0}
+h2{font-size:1rem;margin:0 0 10px;color:var(--mu);font-weight:600}
+.seg{display:flex;border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.seg button{flex:1;padding:8px;border:0;background:none;cursor:pointer}
+.seg .on{background:var(--ac);color:var(--selt)}
+.row{display:flex;gap:8px;margin-bottom:12px}
+.row>*{flex:1;min-width:0;padding:9px;border:1px solid var(--bd);border-radius:10px;background:var(--bg)}
+.go{width:100%;padding:11px;border:0;border-radius:10px;background:var(--ac);color:var(--selt);font-weight:600;cursor:pointer}
+.err{color:var(--hol);min-height:1.3em;margin:8px 0 0;font-size:.9rem}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-weight:600}
+.nav button{border:1px solid var(--bd);background:none;border-radius:8px;width:34px;height:32px;cursor:pointer}
+.nav button:disabled{opacity:.4;cursor:not-allowed}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.cal .h{font-size:.75rem;color:var(--mu);padding:3px 0}
+.cal button{border:1px solid transparent;background:none;border-radius:8px;padding:7px 0;cursor:pointer;position:relative;font-size:.95rem}
+.cal button:hover{background:var(--ac2)}
+.cal .sel{background:var(--sel);color:var(--selt)}
+.cal .td{border-color:var(--ac)}
+.cal .hol::after{content:"";position:absolute;right:4px;top:4px;width:6px;height:6px;border-radius:50%;background:var(--hol)}
+.cal .x{grid-column:1/-1;margin-top:3px;background:var(--ac2)}
+.big{font-size:1.6rem;font-weight:700;color:var(--ac);margin:2px 0}
+.mu{color:var(--mu);font-size:.92rem}
+.tag{display:inline-block;background:var(--hol);color:var(--selt);border-radius:20px;padding:2px 10px;font-size:.82rem;margin:6px 6px 0 0}
+.hl{list-style:none;margin:0;padding:0}
+.hl li{display:flex;gap:10px;justify-content:space-between;padding:8px 6px;border-bottom:1px solid var(--bd);cursor:pointer;border-radius:6px}
+.hl li:hover{background:var(--ac2)}
+.hl small{color:var(--mu);display:block}
+.hl b{white-space:nowrap;color:var(--ac)}
+.yv{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
+.mm{border:1px solid var(--bd);border-radius:10px;padding:8px}
+.mm h3{margin:0 0 4px;font-size:.9rem;color:var(--ac)}
+.mm .cal button{padding:3px 0;font-size:.8rem}
+.mm .cal .h{font-size:.65rem}
+footer{text-align:center;color:var(--mu);font-size:.85rem;padding:12px 0 24px}
+footer a{color:var(--ac)}
+</style>
+</head>
+<body>
+<div class="w">
+<header>
+<h1 id="ttl"></h1>
+<div class="tools">
+<button class="b" id="bs" type="button"></button>
+<button class="b" id="bl" type="button"></button>
+<button class="b" id="bt" type="button"></button>
+</div>
+</header>
+
+<div class="g">
+<div class="c">
+<h2 id="t_in"></h2>
+<div class="seg" role="tablist">
+<button id="cg" type="button" role="tab"></button>
+<button id="cj" type="button" role="tab"></button>
+</div>
+<div class="row">
+<input id="fd" type="number" min="1" max="31" inputmode="numeric" aria-label="day">
+<select id="fm" aria-label="month"></select>
+<input id="fy" type="number" min="1" max="9999" inputmode="numeric" aria-label="year">
+</div>
+<button class="go" id="go" type="button"></button>
+<p class="err" id="er" role="alert"></p>
+</div>
+<div class="c">
+<h2 id="t_pk"></h2>
+<div class="nav">
+<button id="pp" type="button" aria-label="prev month">‹</button>
+<span id="pt"></span>
+<button id="pn" type="button" aria-label="next month">›</button>
+</div>
+<div class="cal" id="pc"></div>
+</div>
+</div>
+
+<div class="c" style="margin-top:14px">
+<h2 id="t_res"></h2>
+<div class="big" id="rb"></div>
+<div class="mu" id="rs"></div>
+<div id="rh"></div>
+<div class="nav" style="margin-top:14px">
+<button id="ip" type="button" aria-label="prev month">‹</button>
+<span id="it"></span>
+<button id="in" type="button" aria-label="next month">›</button>
+</div>
+<div class="cal" id="ic"></div>
+<p class="mu" id="lg"></p>
+</div>
+
+<div class="c">
+<h2 id="t_yr"></h2>
+<div class="nav">
+<button id="yp" type="button" aria-label="prev year">‹</button>
+<span id="yt"></span>
+<button id="yn" type="button" aria-label="next year">›</button>
+</div>
+<div class="yv" id="yv"></div>
+</div>
+
+<div class="c">
+<h2 id="t_hl"></h2>
+<ul class="hl" id="hl"></ul>
+</div>
+<p class="mu" id="nt"></p>
+<footer>
+<a href="https://github.com/" id="gh" target="_blank" rel="noopener">GitHub</a>
+</footer>
+</div>
+
+<script>
+"use strict";
+const fl = Math.floor;
+const $ = s => document.querySelector(s);
+
+const isLeap = y => y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0);
+
+function toJDN(c, y, m, d) {
+  const a = fl((14 - m) / 12);
+  const yy = y + 4800 - a;
+  const mm = m + 12 * a - 3;
+  const j = d + fl((153 * mm + 2) / 5) + 365 * yy + fl(yy / 4);
+  return c === 'g' ? j - fl(yy / 100) + fl(yy / 400) - 32045 : j - 32083;
+}
+function fromJDN(c, J) {
+  let f = J + 1401;
+  if (c === 'g') f += fl(fl((4 * J + 274277) / 146097) * 3 / 4) - 38;
+  const e = 4 * f + 3;
+  const g = fl((e % 1461) / 4);
+  const h = 5 * g + 2;
+  const D = fl((h % 153) / 5) + 1;
+  const M = (fl(h / 153) + 2) % 12 + 1;
+  return [fl(e / 1461) - 4716 + fl((14 - M) / 12), M, D];
+}
+function ifc(j) {
+  const [y] = fromJDN('g', j);
+  const doy = j - toJDN('g', y, 1, 1) + 1;
+  const lp = isLeap(y);
+  if (lp && doy === 169) return { y, k: 'leap', m: 6 };
+  let n = doy;
+  if (lp && doy > 169) n--;
+  if (n === 365) return { y, k: 'year', m: 13 };
+  return { y, k: 'n', m: fl((n - 1) / 28) + 1, d: (n - 1) % 28 + 1 };
+}
+function ifcJ(y, m, d, k) {
+  const s = toJDN('g', y, 1, 1);
+  const lp = isLeap(y);
+  if (k === 'leap') return s + 168;
+  if (k === 'year') return s + (lp ? 365 : 364);
+  let n = (m - 1) * 28 + d;
+  if (lp && n >= 169) n++;
+  return s + n - 1;
+}
+
+const L = {
+  ru: {
+    ttl: 'Международный фиксированный календарь',
+    t_in: 'Дата для перевода', t_yr: 'Год целиком',
+    s1: 'Сол: июнь–июль', s2: 'Сол: июль–август',
+    t_pk: 'Календарь', t_res: 'Результат', t_hl: 'Международные праздники года',
+    cg: 'Григорианский', cj: 'Юлианский', go: 'Перевести',
+    bad: 'Такой даты нет в выбранном календаре',
+    badyear: 'Год должен быть от 1 до 9999',
+    m: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+    mg: ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'],
+    im: ['Январь','Февраль','Март','Апрель','Май','Июнь','Сол','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+    img: ['января','февраля','марта','апреля','мая','июня','Сола','июля','августа','сентября','октября','ноября','декабря'],
+    wd: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
+    ws: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+    pw: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
+    leap: 'Високосный день', year: 'День года', noweek: 'вне недели',
+    gr: 'Григорианский', ju: 'Юлианский',
+    legend: '● — праздник. Каждый месяц начинается с воскресенья; наведите на день, чтобы увидеть григорианскую дату.',
+    note: 'Юлианские даты пересчитываются через юлианское число (JDN); для дат до 1582 г. григорианский календарь — пролептический. Високосные годы в МФК — как в григорианском календаре; Високосный день стоит после 28 июня.',
+    H: { ny:'Новый год', orx:'Рождество (православное)', lang:'День родного языка', w:'День женщин', water:'Всемирный день воды', earth:'День Земли', lab:'День труда', env:'День окружающей среды', ch:'День защиты детей', youth:'День молодёжи', peace:'День мира', teach:'День учителя', un:'День ООН', hr:'День прав человека', xm:'Рождество (католическое)', ev:'Канун Нового года', ew:'Пасха (западная)', eo:'Пасха (православная)', val:'День святого Валентина' },
+    tl: 'Тёмная тема', tn: 'Светлая тема', lb: 'English'
+  },
+  en: {
+    ttl: 'International Fixed Calendar',
+    t_in: 'Date to convert', t_yr: 'Full year',
+    s1: 'Sol: Jun–Jul', s2: 'Sol: Jul–Aug',
+    t_pk: 'Calendar', t_res: 'Result', t_hl: 'International holidays of the year',
+    cg: 'Gregorian', cj: 'Julian', go: 'Convert',
+    bad: 'This date does not exist in the chosen calendar',
+    badyear: 'Year must be between 1 and 9999',
+    m: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    mg: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    im: ['January','February','March','April','May','June','Sol','July','August','September','October','November','December'],
+    img: ['January','February','March','April','May','June','Sol','July','August','September','October','November','December'],
+    wd: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    ws: ['Su','Mo','Tu','We','Th','Fr','Sa'],
+    pw: ['Mo','Tu','We','Th','Fr','Sa','Su'],
+    leap: 'Leap Day', year: 'Year Day', noweek: 'outside the week',
+    gr: 'Gregorian', ju: 'Julian',
+    legend: '● — holiday. Every month starts on Sunday; hover a day to see its Gregorian date.',
+    note: 'Julian dates are converted via the Julian Day Number (JDN); the Gregorian calendar is proleptic before 1582. IFC leap years follow the Gregorian rules; Leap Day follows June 28.',
+    H: { ny:"New Year's Day", orx:'Christmas (Orthodox)', lang:'Mother Language Day', w:"Women's Day", water:'World Water Day', earth:'Earth Day', lab:'Labour Day', env:'Environment Day', ch:"Children's Day", youth:'Youth Day', peace:'Day of Peace', teach:"Teachers' Day", un:'United Nations Day', hr:'Human Rights Day', xm:'Christmas (Western)', ev:"New Year's Eve", ew:'Easter (Western)', eo:'Easter (Orthodox)', val:"Valentine's Day" },
+    tl: 'Dark theme', tn: 'Light theme', lb: 'Русский'
+  }
+};
+
+const FIX = [
+  [1,1,'ny'],[2,14,'val'],[2,21,'lang'],[3,8,'w'],[3,22,'water'],[4,22,'earth'],
+  [5,1,'lab'],[6,1,'ch'],[6,5,'env'],[8,12,'youth'],[9,21,'peace'],
+  [10,5,'teach'],[10,24,'un'],[12,10,'hr'],[12,25,'xm'],[12,31,'ev']
+];
+
+const cache = {};
+function hols(y) {
+  if (cache[y]) return cache[y];
+  const r = FIX.map(([m, d, k]) => ({ j: toJDN('g', y, m, d), k }));
+  [y - 1, y].forEach(jy => {
+    const j = toJDN('j', jy, 12, 25);
+    if (fromJDN('g', j)[0] === y) r.push({ j, k: 'orx' });
+  });
+  // Western Easter (anonymous Gregorian algorithm)
+  let a = y % 19, b = fl(y / 100), c = y % 100, d = fl(b / 4), e = b % 4,
+      f = fl((b + 8) / 25), g = fl((b - f + 1) / 3),
+      h = (19 * a + b - d - g + 15) % 30,
+      i = fl(c / 4), k = c % 4,
+      l = (32 + 2 * e + 2 * i - h - k) % 7,
+      m = fl((a + 11 * h + 22 * l) / 451),
+      n = h + l - 7 * m + 114;
+  r.push({ j: toJDN('g', y, fl(n / 31), n % 31 + 1), k: 'ew' });
+  // Orthodox Easter (Meeus Julian algorithm)
+  let a2 = y % 4, b2 = y % 7, c2 = y % 19,
+      d2 = (19 * c2 + 15) % 30,
+      e2 = (2 * a2 + 4 * b2 - d2 + 34) % 7,
+      n2 = d2 + e2 + 114;
+  const oj = toJDN('j', y, fl(n2 / 31), n2 % 31 + 1);
+  if (fromJDN('g', oj)[0] === y) r.push({ j: oj, k: 'eo' });
+  r.sort((p, q) => p.j - q.j);
+  return cache[y] = r;
+}
+const holAt = j => hols(fromJDN('g', j)[0]).filter(h => h.j === j);
+
+let lang = (navigator.language || '').startsWith('ru') ? 'ru' : 'en';
+let theme = null;
+let sol = 'aug';
+let S, R, PV, IV;
+
+try {
+  lang = localStorage.getItem('lang') || lang;
+  theme = localStorage.getItem('theme');
+  sol = localStorage.getItem('sol') || sol;
+} catch (e) {}
+
+const T = () => L[lang];
+const ord = a => sol === 'aug'
+  ? a.map((_, i) => a[i === 6 ? 7 : i === 7 ? 6 : i])
+  : a;
+const dark = () => theme ? theme === 'dark' : matchMedia('(prefers-color-scheme:dark)').matches;
+const today = () => {
+  const n = new Date();
+  return toJDN('g', n.getFullYear(), n.getMonth() + 1, n.getDate());
+};
+
+{
+  const t = fromJDN('g', today());
+  S = { c: 'g', y: t[0], m: t[1], d: t[2] };
+  PV = { y: t[0], m: t[1] };
+  R = today();
+  IV = { y: t[0], m: ifc(R).m };
+}
+
+function fmtI(j) {
+  const o = ifc(j), t = T();
+  return o.k === 'n'
+    ? `${o.d} ${ord(t.img)[o.m - 1]} ${o.y}`
+    : `${o.k === 'leap' ? t.leap : t.year}, ${o.y}`;
+}
+function fmtC(c, j) {
+  const [y, m, d] = fromJDN(c, j);
+  return `${d} ${T().mg[m - 1]} ${y}`;
+}
+
+function head() {
+  const t = T();
+  document.documentElement.lang = lang;
+  document.documentElement.dataset.theme = dark() ? 'dark' : 'light';
+  document.title = t.ttl;
+  $('#ttl').textContent = t.ttl;
+  ['t_in', 't_pk', 't_res', 't_hl', 't_yr'].forEach(i => $('#' + i).textContent = t[i]);
+  $('#cg').textContent = t.cg;
+  $('#cj').textContent = t.cj;
+  $('#go').textContent = t.go;
+  $('#lg').textContent = t.legend;
+  $('#nt').textContent = t.note;
+  $('#bl').textContent = t.lb;
+  $('#bs').textContent = sol === 'aug' ? t.s2 : t.s1;
+  $('#bt').textContent = dark() ? t.tn : t.tl;
+  $('#cg').className = S.c === 'g' ? 'on' : '';
+  $('#cj').className = S.c === 'j' ? 'on' : '';
+  $('#fm').innerHTML = t.m.map((n, i) => `<option value="${i + 1}">${n}</option>`).join('');
+  $('#fd').value = S.d;
+  $('#fm').value = S.m;
+  $('#fy').value = S.y;
+}
+
+function picker() {
+  const t = T(), { y, m } = PV;
+  const s = toJDN(S.c, y, m, 1);
+  const nx = m === 12 ? toJDN(S.c, y + 1, 1, 1) : toJDN(S.c, y, m + 1, 1);
+  const n = nx - s;
+  const off = ((s + 1) % 7 + 6) % 7;
+  const tj = today();
+  const sj = toJDN(S.c, S.y, S.m, S.d);
+  $('#pt').textContent = `${t.m[m - 1]} ${y} · ${S.c === 'g' ? t.gr : t.ju}`;
+  let h = t.pw.map(w => `<div class="h">${w}</div>`).join('') + '<span></span>'.repeat(off);
+  for (let d = 1; d <= n; d++) {
+    const j = s + d - 1;
+    h += `<button type="button" data-d="${d}" class="${j === sj ? 'sel' : ''} ${j === tj ? 'td' : ''} ${holAt(j).length ? 'hol' : ''}">${d}</button>`;
+  }
+  $('#pc').innerHTML = h;
+}
+
+function cellHTML(j, txt, extra) {
+  const t = T();
+  const hs = holAt(j);
+  const title = `${fmtC('g', j)}${hs.length ? ' — ' + hs.map(q => t.H[q.k]).join(', ') : ''}`;
+  return `<button type="button" data-j="${j}" class="${j === R ? 'sel' : ''} ${j === today() ? 'td' : ''} ${hs.length ? 'hol' : ''} ${extra || ''}" title="${title}">${txt}</button>`;
+}
+
+function grid() {
+  const t = T(), { y, m } = IV, lp = isLeap(y);
+  $('#it').textContent = `${ord(t.im)[m - 1]} ${y}`;
+  let h = t.ws.map(w => `<div class="h">${w}</div>`).join('');
+  for (let d = 1; d <= 28; d++) h += cellHTML(ifcJ(y, m, d, 'n'), d);
+  if (m === 6 && lp) h += cellHTML(ifcJ(y, 0, 0, 'leap'), t.leap, 'x');
+  if (m === 13) h += cellHTML(ifcJ(y, 0, 0, 'year'), t.year, 'x');
+  $('#ic').innerHTML = h;
+}
+
+function yearGrid() {
+  const t = T(), y = IV.y, lp = isLeap(y), nm = ord(t.im);
+  $('#yt').textContent = y;
+  let h = '';
+  for (let m = 1; m <= 13; m++) {
+    let c = t.ws.map(w => `<div class="h">${w[0]}</div>`).join('');
+    for (let d = 1; d <= 28; d++) c += cellHTML(ifcJ(y, m, d, 'n'), d);
+    if (m === 6 && lp) c += cellHTML(ifcJ(y, 0, 0, 'leap'), t.leap, 'x');
+    if (m === 13) c += cellHTML(ifcJ(y, 0, 0, 'year'), t.year, 'x');
+    h += `<div class="mm"><h3>${nm[m - 1]}</h3><div class="cal">${c}</div></div>`;
+  }
+  $('#yv').innerHTML = h;
+}
+
+function result() {
+  const t = T(), o = ifc(R);
+  $('#rb').textContent = fmtI(R);
+  const wd = o.k === 'n' ? t.wd[(o.d - 1) % 7] : t.noweek;
+  $('#rs').innerHTML = `${wd}<br>${t.gr}: ${fmtC('g', R)}<br>${t.ju}: ${fmtC('j', R)}`;
+  $('#rh').innerHTML = holAt(R).map(h => `<span class="tag">${t.H[h.k]}</span>`).join('');
+  $('#hl').innerHTML = hols(o.y).map(h => {
+    const short = fmtI(h.j).replace(/,?\s*\d{1,4}$/, '');
+    return `<li data-j="${h.j}"><span>${t.H[h.k]}<small>${fmtC('g', h.j)}</small></span><b>${short}</b></li>`;
+  }).join('');
+}
+
+function all() {
+  head();
+  picker();
+  grid();
+  yearGrid();
+  result();
+}
+
+function show(j) {
+  R = j;
+  const o = ifc(j);
+  IV = { y: o.y, m: o.m };
+  result();
+  grid();
+  yearGrid();
+  // sync picker to selected date's calendar month
+  const [gy, gm] = fromJDN(S.c, j);
+  PV = { y: gy, m: gm };
+  picker();
+}
+
+function convert() {
+  const c = S.c;
+  const y = +$('#fy').value;
+  const m = +$('#fm').value;
+  const d = +$('#fd').value;
+  const t = T();
+  if (!(y >= 1 && y <= 9999)) { $('#er').textContent = t.badyear; return; }
+  if (!(d >= 1 && d <= 31)) { $('#er').textContent = t.bad; return; }
+  const j = toJDN(c, y, m, d);
+  const b = fromJDN(c, j);
+  if (b[0] !== y || b[1] !== m || b[2] !== d) { $('#er').textContent = t.bad; return; }
+  $('#er').textContent = '';
+  S = { c, y, m, d };
+  PV = { y, m };
+  picker();
+  show(j);
+}
+
+$('#go').onclick = convert;
+$('#cg').onclick = () => { S.c = 'g'; PV = { y: S.y, m: S.m }; head(); picker(); };
+$('#cj').onclick = () => { S.c = 'j'; PV = { y: S.y, m: S.m }; head(); picker(); };
+$('#bl').onclick = () => {
+  lang = lang === 'ru' ? 'en' : 'ru';
+  try { localStorage.setItem('lang', lang); } catch (e) {}
+  all();
+};
+$('#bs').onclick = () => {
+  sol = sol === 'aug' ? 'jul' : 'aug';
+  try { localStorage.setItem('sol', sol); } catch (e) {}
+  head();
+  result();
+  grid();
+  yearGrid();
+};
+$('#yp').onclick = () => { if (IV.y > 1) { IV.y--; yearGrid(); } };
+$('#yn').onclick = () => { if (IV.y < 9999) { IV.y++; yearGrid(); } };
+$('#yv').onclick = e => { const j = e.target.dataset.j; if (j) show(+j); };
+$('#bt').onclick = () => {
+  theme = dark() ? 'light' : 'dark';
+  try { localStorage.setItem('theme', theme); } catch (e) {}
+  head();
+  $('#bt').textContent = dark() ? T().tn : T().tl;
+};
+$('#pp').onclick = () => {
+  if (PV.m === 1) { if (PV.y > 1) { PV = { y: PV.y - 1, m: 12 }; } }
+  else PV.m--;
+  picker();
+};
+$('#pn').onclick = () => {
+  if (PV.m === 12) { if (PV.y < 9999) { PV = { y: PV.y + 1, m: 1 }; } }
+  else PV.m++;
+  picker();
+};
+$('#ip').onclick = () => {
+  if (IV.m === 1) { if (IV.y > 1) { IV = { y: IV.y - 1, m: 13 }; } }
+  else IV.m--;
+  grid();
+};
+$('#in').onclick = () => {
+  if (IV.m === 13) { if (IV.y < 9999) { IV = { y: IV.y + 1, m: 1 }; } }
+  else IV.m++;
+  grid();
+};
+$('#pc').onclick = e => {
+  const d = e.target.dataset.d;
+  if (!d) return;
+  S = { ...S, y: PV.y, m: PV.m, d: +d };
+  head();
+  picker();
+  convert();
+};
+$('#ic').onclick = e => { const j = e.target.dataset.j; if (j) show(+j); };
+$('#hl').onclick = e => { const li = e.target.closest('li'); if (li) show(+li.dataset.j); };
+
+// keyboard navigation for picker
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, select, textarea')) return;
+  if (e.key === 'ArrowLeft') { $('#pp').click(); }
+  if (e.key === 'ArrowRight') { $('#pn').click(); }
+});
+
+all();
+</script>
+</body>
+</html>
