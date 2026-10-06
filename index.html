@@ -8,7 +8,6 @@
 <meta name="theme-color" content="#2f6f5e">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{--bg:#f6f4ef;--card:#fff;--tx:#1d2330;--mu:#6b7280;--ac:#2f6f5e;--ac2:#e8f2ee;--bd:#e2ded4;--hol:#c2410c;--sel:#2f6f5e;--selt:#fff}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1a2029;--tx:#e8eaee;--mu:#98a1b0;--ac:#5fb59c;--ac2:#1f2e2a;--bd:#2b3442;--hol:#fb923c;--sel:#5fb59c;--selt:#0f1713}}
@@ -199,7 +198,7 @@ const L = {
     gr: 'Григорианский', ju: 'Юлианский',
     legend: '● — праздник. Каждый месяц начинается с воскресенья; наведите на день, чтобы увидеть григорианскую дату.',
     note: 'Юлианские даты пересчитываются через юлианское число (JDN); для дат до 1582 г. григорианский календарь — пролептический. Високосные годы в МФК — как в григорианском календаре; Високосный день стоит после 28 июня.',
-    H: { ny:'Новый год', orx:'Рождество (православное)', lang:'День родного языка', w:'День женщин', water:'Всемирный день воды', earth:'День Земли', lab:'День труда', env:'День окружающей среды', ch:'День защиты детей', youth:'День молодёжи', peace:'День мира', teach:'День учителя', un:'День ООН', hr:'День прав человека', xm:'Рождество (католическое)', ev:'Канун Нового года', ew:'Пасха (западная)', eo:'Пасха (православная)', val:'День святого Валентина' },
+    H: { ny:'Новый год', orx:'Рождество (православное)', lang:'День родного языка', w:'День женщин', water:'Всемирный день воды', earth:'День Земли', lab:'День труда', env:'День окружающей среды', ch:'День защиты детей', youth:'День молодёжи', peace:'День мира', teach:'День учителя', un:'День ООН', hr:'День прав человека', xm:'Рождество (католическое)', ev:'Канун Нового года', ew:'Пасха (западная)', eo:'Пасха (православная)', val:'День святого Валентина', father:'День отца', mother:'День матери', men:'Мужской день', book:'День книги', health:'День здоровья', space:'День космонавтики', music:'День музыки', disab:'День инвалидов', vol:'День волонтёра' },
     tl: 'Тёмная тема', tn: 'Светлая тема', lb: 'English'
   },
   en: {
@@ -221,15 +220,37 @@ const L = {
     gr: 'Gregorian', ju: 'Julian',
     legend: '● — holiday. Every month starts on Sunday; hover a day to see its Gregorian date.',
     note: 'Julian dates are converted via the Julian Day Number (JDN); the Gregorian calendar is proleptic before 1582. IFC leap years follow the Gregorian rules; Leap Day follows June 28.',
-    H: { ny:"New Year's Day", orx:'Christmas (Orthodox)', lang:'Mother Language Day', w:"Women's Day", water:'World Water Day', earth:'Earth Day', lab:'Labour Day', env:'Environment Day', ch:"Children's Day", youth:'Youth Day', peace:'Day of Peace', teach:"Teachers' Day", un:'United Nations Day', hr:'Human Rights Day', xm:'Christmas (Western)', ev:"New Year's Eve", ew:'Easter (Western)', eo:'Easter (Orthodox)', val:"Valentine's Day" },
+    H: { ny:"New Year's Day", orx:'Christmas (Orthodox)', lang:'Mother Language Day', w:"Women's Day", water:'World Water Day', earth:'Earth Day', lab:'Labour Day', env:'Environment Day', ch:"Children's Day", youth:'Youth Day', peace:'Day of Peace', teach:"Teachers' Day", un:'United Nations Day', hr:'Human Rights Day', xm:'Christmas (Western)', ev:"New Year's Eve", ew:'Easter (Western)', eo:'Easter (Orthodox)', val:"Valentine's Day", father:"Father's Day", mother:"Mother's Day", men:"International Men's Day", book:'World Book Day', health:'World Health Day', space:'Human Space Flight Day', music:'International Music Day', disab:'Day of Persons with Disabilities', vol:'Volunteer Day' },
     tl: 'Dark theme', tn: 'Light theme', lb: 'Русский'
   }
 };
 
 const FIX = [
-  [1,1,'ny'],[2,14,'val'],[2,21,'lang'],[3,8,'w'],[3,22,'water'],[4,22,'earth'],
-  [5,1,'lab'],[6,1,'ch'],[6,5,'env'],[8,12,'youth'],[9,21,'peace'],
-  [10,5,'teach'],[10,24,'un'],[12,10,'hr'],[12,25,'xm'],[12,31,'ev']
+  [1,1,'ny'],
+  [2,14,'val'],
+  [2,21,'lang'],
+  [3,8,'w'],
+  [3,22,'water'],
+  [4,7,'health'],
+  [4,12,'space'],
+  [4,22,'earth'],
+  [4,23,'book'],
+  [5,1,'lab'],
+  [5,8,'mother'],
+  [6,1,'ch'],
+  [6,5,'env'],
+  [6,15,'father'],
+  [8,12,'youth'],
+  [9,21,'peace'],
+  [10,1,'music'],
+  [10,5,'teach'],
+  [10,24,'un'],
+  [11,19,'men'],
+  [12,3,'disab'],
+  [12,5,'vol'],
+  [12,10,'hr'],
+  [12,25,'xm'],
+  [12,31,'ev']
 ];
 
 const cache = {};
@@ -240,7 +261,6 @@ function hols(y) {
     const j = toJDN('j', jy, 12, 25);
     if (fromJDN('g', j)[0] === y) r.push({ j, k: 'orx' });
   });
-  // Western Easter (anonymous Gregorian algorithm)
   let a = y % 19, b = fl(y / 100), c = y % 100, d = fl(b / 4), e = b % 4,
       f = fl((b + 8) / 25), g = fl((b - f + 1) / 3),
       h = (19 * a + b - d - g + 15) % 30,
@@ -249,7 +269,6 @@ function hols(y) {
       m = fl((a + 11 * h + 22 * l) / 451),
       n = h + l - 7 * m + 114;
   r.push({ j: toJDN('g', y, fl(n / 31), n % 31 + 1), k: 'ew' });
-  // Orthodox Easter (Meeus Julian algorithm)
   let a2 = y % 4, b2 = y % 7, c2 = y % 19,
       d2 = (19 * c2 + 15) % 30,
       e2 = (2 * a2 + 4 * b2 - d2 + 34) % 7,
@@ -399,7 +418,6 @@ function show(j) {
   result();
   grid();
   yearGrid();
-  // sync picker to selected date's calendar month
   const [gy, gm] = fromJDN(S.c, j);
   PV = { y: gy, m: gm };
   picker();
@@ -446,7 +464,6 @@ $('#bt').onclick = () => {
   theme = dark() ? 'light' : 'dark';
   try { localStorage.setItem('theme', theme); } catch (e) {}
   head();
-  $('#bt').textContent = dark() ? T().tn : T().tl;
 };
 $('#pp').onclick = () => {
   if (PV.m === 1) { if (PV.y > 1) { PV = { y: PV.y - 1, m: 12 }; } }
@@ -479,7 +496,6 @@ $('#pc').onclick = e => {
 $('#ic').onclick = e => { const j = e.target.dataset.j; if (j) show(+j); };
 $('#hl').onclick = e => { const li = e.target.closest('li'); if (li) show(+li.dataset.j); };
 
-// keyboard navigation for picker
 document.addEventListener('keydown', e => {
   if (e.target.matches('input, select, textarea')) return;
   if (e.key === 'ArrowLeft') { $('#pp').click(); }
