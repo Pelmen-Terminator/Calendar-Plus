@@ -14,7 +14,7 @@
 :root[data-theme="dark"]{--bg:#12161c;--card:#1a2029;--tx:#e8eaee;--mu:#98a1b0;--ac:#5fb59c;--ac2:#1f2e2a;--bd:#2b3442;--hol:#fb923c;--sel:#5fb59c;--selt:#0f1713}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .w{max-width:960px;margin:0 auto;padding:16px}
 header{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
 h1{font-size:1.3rem;margin:0}
@@ -198,7 +198,7 @@ const L = {
     gr: 'Григорианский', ju: 'Юлианский',
     legend: '● — праздник. Каждый месяц начинается с воскресенья; наведите на день, чтобы увидеть григорианскую дату.',
     note: 'Юлианские даты пересчитываются через юлианское число (JDN); для дат до 1582 г. григорианский календарь — пролептический. Високосные годы в МФК — как в григорианском календаре; Високосный день стоит после 28 июня.',
-    H: { ny:'Новый год', orx:'Рождество (православное)', lang:'День родного языка', w:'День женщин', water:'Всемирный день воды', earth:'День Земли', lab:'День труда', env:'День окружающей среды', ch:'День защиты детей', youth:'День молодёжи', peace:'День мира', teach:'День учителя', un:'День ООН', hr:'День прав человека', xm:'Рождество (католическое)', ev:'Канун Нового года', ew:'Пасха (западная)', eo:'Пасха (православная)', val:'День святого Валентина', father:'День отца', mother:'День матери', men:'Мужской день', book:'День книги', health:'День здоровья', space:'День космонавтики', music:'День музыки', disab:'День инвалидов', vol:'День волонтёра' },
+    H: { ny:'Новый год', orx:'Рождество (православное)', lang:'День родного языка', w:'День женщин', water:'Всемирный день воды', earth:'День Земли', lab:'День труда', env:'День окружающей среды', ch:'День защиты детей', youth:'День молодёжи', peace:'День мира', teach:'День учителя', un:'День ООН', hr:'День прав человека', xm:'Рождество (католическое)', ev:'Канун Нового года', ew:'Пасха (западная)', eo:'Пасха (православная)', val:'День святого Валентина', father:'День отца', mother:'День матери', men:'Мужской день', book:'День книги', health:'День здоровья', space:'День космонавтики', music:'День музыки', disab:'День инвалидов', vol:'День волонтёра', vdayE:'День Победы (Восток)', vdayW:'День Победы (Запад)', holocaust:'День памяти Холокоста', oceans:'День океанов', elderly:'День пожилых людей', post:'День почты', tv:'День телевидения', mountains:'День гор', migrants:'День мигрантов', peace2:'День мира и примирения' },
     tl: 'Тёмная тема', tn: 'Светлая тема', lb: 'English'
   },
   en: {
@@ -220,13 +220,83 @@ const L = {
     gr: 'Gregorian', ju: 'Julian',
     legend: '● — holiday. Every month starts on Sunday; hover a day to see its Gregorian date.',
     note: 'Julian dates are converted via the Julian Day Number (JDN); the Gregorian calendar is proleptic before 1582. IFC leap years follow the Gregorian rules; Leap Day follows June 28.',
-    H: { ny:"New Year's Day", orx:'Christmas (Orthodox)', lang:'Mother Language Day', w:"Women's Day", water:'World Water Day', earth:'Earth Day', lab:'Labour Day', env:'Environment Day', ch:"Children's Day", youth:'Youth Day', peace:'Day of Peace', teach:"Teachers' Day", un:'United Nations Day', hr:'Human Rights Day', xm:'Christmas (Western)', ev:"New Year's Eve", ew:'Easter (Western)', eo:'Easter (Orthodox)', val:"Valentine's Day", father:"Father's Day", mother:"Mother's Day", men:"International Men's Day", book:'World Book Day', health:'World Health Day', space:'Human Space Flight Day', music:'International Music Day', disab:'Day of Persons with Disabilities', vol:'Volunteer Day' },
-    tl: 'Dark theme', tn: 'Light theme', lb: 'Русский'
+    H: { ny:"New Year's Day", orx:'Christmas (Orthodox)', lang:'Mother Language Day', w:"Women's Day", water:'World Water Day', earth:'Earth Day', lab:'Labour Day', env:'Environment Day', ch:"Children's Day", youth:'Youth Day', peace:'Day of Peace', teach:"Teachers' Day", un:'United Nations Day', hr:'Human Rights Day', xm:'Christmas (Western)', ev:"New Year's Eve", ew:'Easter (Western)', eo:'Easter (Orthodox)', val:"Valentine's Day", father:"Father's Day", mother:"Mother's Day", men:"International Men's Day", book:'World Book Day', health:'World Health Day', space:'Human Space Flight Day', music:'International Music Day', disab:'Day of Persons with Disabilities', vol:'Volunteer Day', vdayE:'Victory Day (East)', vdayW:'Victory Day (West)', holocaust:'Holocaust Remembrance Day', oceans:'World Oceans Day', elderly:'Day of Older Persons', post:'World Post Day', tv:'World Television Day', mountains:'International Mountain Day', migrants:'International Migrants Day', peace2:'Day of Peace and Reconciliation' },
+    tl: 'Dark theme', tn: 'Light theme', lb: 'Português'
+  },
+  pt: {
+    ttl: 'Calendário Fixo Internacional',
+    t_in: 'Data para converter', t_yr: 'Ano completo',
+    s1: 'Sol: jun–jul', s2: 'Sol: jul–ago',
+    t_pk: 'Calendário', t_res: 'Resultado', t_hl: 'Feriados internacionais do ano',
+    cg: 'Gregoriano', cj: 'Juliano', go: 'Converter',
+    bad: 'Esta data não existe no calendário escolhido',
+    badyear: 'O ano deve estar entre 1 e 9999',
+    m: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+    mg: ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
+    im: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Sol','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+    img: ['janeiro','fevereiro','março','abril','maio','junho','Sol','julho','agosto','setembro','outubro','novembro','dezembro'],
+    wd: ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],
+    ws: ['Do','Se','Te','Qa','Qi','Se','Sá'],
+    pw: ['Se','Te','Qa','Qi','Se','Sá','Do'],
+    leap: 'Dia Bissexto', year: 'Dia do Ano', noweek: 'fora da semana',
+    gr: 'Gregoriano', ju: 'Juliano',
+    legend: '● — feriado. Cada mês começa no domingo; passe o mouse sobre um dia para ver a data gregoriana.',
+    note: 'As datas julianas são convertidas via Número do Dia Juliano (JDN); o calendário gregoriano é proleptico antes de 1582. Os anos bissextos no CFI seguem as regras gregorianas; o Dia Bissexto segue 28 de junho.',
+    H: { ny:'Ano Novo', orx:'Natal (Ortodoxo)', lang:'Dia da Língua Materna', w:'Dia da Mulher', water:'Dia Mundial da Água', earth:'Dia da Terra', lab:'Dia do Trabalho', env:'Dia do Meio Ambiente', ch:'Dia das Crianças', youth:'Dia da Juventude', peace:'Dia da Paz', teach:'Dia do Professor', un:'Dia da ONU', hr:'Dia dos Direitos Humanos', xm:'Natal (Ocidental)', ev:'Véspera de Ano Novo', ew:'Páscoa (Ocidental)', eo:'Páscoa (Ortodoxa)', val:'Dia dos Namorados', father:'Dia dos Pais', mother:'Dia das Mães', men:'Dia Internacional do Homem', book:'Dia Mundial do Livro', health:'Dia Mundial da Saúde', space:'Dia do Voo Espacial Humano', music:'Dia Internacional da Música', disab:'Dia das Pessoas com Deficiência', vol:'Dia do Voluntário', vdayE:'Dia da Vitória (Leste)', vdayW:'Dia da Vitória (Oeste)', holocaust:'Dia da Memória do Holocausto', oceans:'Dia Mundial dos Oceanos', elderly:'Dia Internacional do Idoso', post:'Dia Mundial dos Correios', tv:'Dia Mundial da Televisão', mountains:'Dia Internacional das Montanhas', migrants:'Dia Internacional dos Migrantes', peace2:'Dia da Paz e Reconciliação' },
+    tl: 'Tema escuro', tn: 'Tema claro', lb: 'Español'
+  },
+  es: {
+    ttl: 'Calendario Fijo Internacional',
+    t_in: 'Fecha a convertir', t_yr: 'Año completo',
+    s1: 'Sol: jun–jul', s2: 'Sol: jul–ago',
+    t_pk: 'Calendario', t_res: 'Resultado', t_hl: 'Días festivos internacionales del año',
+    cg: 'Gregoriano', cj: 'Juliano', go: 'Convertir',
+    bad: 'Esta fecha no existe en el calendario elegido',
+    badyear: 'El año debe estar entre 1 y 9999',
+    m: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    mg: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
+    im: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Sol','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    img: ['enero','febrero','marzo','abril','mayo','junio','Sol','julio','agosto','septiembre','octubre','noviembre','diciembre'],
+    wd: ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],
+    ws: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+    pw: ['Lu','Ma','Mi','Ju','Vi','Sá','Do'],
+    leap: 'Día Bisiesto', year: 'Día del Año', noweek: 'fuera de la semana',
+    gr: 'Gregoriano', ju: 'Juliano',
+    legend: '● — festivo. Cada mes comienza en domingo; pasa el cursor sobre un día para ver su fecha gregoriana.',
+    note: 'Las fechas julianas se convierten vía Número de Día Juliano (JDN); el calendario gregoriano es proleptico antes de 1582. Los años bisiestos en el CFI siguen las reglas gregorianas; el Día Bisiesto va después del 28 de junio.',
+    H: { ny:'Año Nuevo', orx:'Navidad (Ortodoxa)', lang:'Día de la Lengua Materna', w:'Día de la Mujer', water:'Día Mundial del Agua', earth:'Día de la Tierra', lab:'Día del Trabajo', env:'Día del Medio Ambiente', ch:'Día del Niño', youth:'Día de la Juventud', peace:'Día de la Paz', teach:'Día del Maestro', un:'Día de las Naciones Unidas', hr:'Día de los Derechos Humanos', xm:'Navidad (Occidental)', ev:'Nochevieja', ew:'Pascua (Occidental)', eo:'Pascua (Ortodoxa)', val:'Día de San Valentín', father:'Día del Padre', mother:'Día de la Madre', men:'Día Internacional del Hombre', book:'Día Mundial del Libro', health:'Día Mundial de la Salud', space:'Día del Vuelo Espacial Humano', music:'Día Internacional de la Música', disab:'Día de las Personas con Discapacidad', vol:'Día del Voluntario', vdayE:'Día de la Victoria (Este)', vdayW:'Día de la Victoria (Oeste)', holocaust:'Día de la Memoria del Holocausto', oceans:'Día Mundial de los Océanos', elderly:'Día Internacional de las Personas Mayores', post:'Día Mundial del Correo', tv:'Día Mundial de la Televisión', mountains:'Día Internacional de las Montañas', migrants:'Día Internacional del Migrante', peace2:'Día de la Paz y Reconciliación' },
+    tl: 'Tema oscuro', tn: 'Tema claro', lb: '中文'
+  },
+  zh: {
+    ttl: '国际固定历',
+    t_in: '要转换的日期', t_yr: '全年',
+    s1: 'Sol：6–7月', s2: 'Sol：7–8月',
+    t_pk: '日历', t_res: '结果', t_hl: '年度国际节日',
+    cg: '公历', cj: '儒略历', go: '转换',
+    bad: '所选历法中不存在该日期',
+    badyear: '年份必须在 1 到 9999 之间',
+    m: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+    mg: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+    im: ['一月','二月','三月','四月','五月','六月','Sol','七月','八月','九月','十月','十一月','十二月'],
+    img: ['一月','二月','三月','四月','五月','六月','Sol','七月','八月','九月','十月','十一月','十二月'],
+    wd: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+    ws: ['日','一','二','三','四','五','六'],
+    pw: ['一','二','三','四','五','六','日'],
+    leap: '闰日', year: '年日', noweek: '周外',
+    gr: '公历', ju: '儒略历',
+    legend: '● — 节日。每月从星期日开始；将鼠标悬停在某天可查看其公历日期。',
+    note: '儒略历日期通过儒略日数（JDN）转换；1582 年前的公历为外推历。国际固定历的闰年遵循公历规则；闰日在 6 月 28 日之后。',
+    H: { ny:'元旦', orx:'圣诞节（东正教）', lang:'母语日', w:'妇女节', water:'世界水日', earth:'地球日', lab:'劳动节', env:'世界环境日', ch:'儿童节', youth:'青年节', peace:'和平日', teach:'教师节', un:'联合国日', hr:'人权日', xm:'圣诞节（西方）', ev:'新年前夜', ew:'复活节（西方）', eo:'复活节（东正教）', val:'情人节', father:'父亲节', mother:'母亲节', men:'国际男人节', book:'世界读书日', health:'世界卫生日', space:'载人航天日', music:'国际音乐日', disab:'国际残疾人日', vol:'国际志愿者日', vdayE:'胜利日（东方）', vdayW:'胜利日（西方）', holocaust:'大屠杀纪念日', oceans:'世界海洋日', elderly:'国际老年人日', post:'世界邮政日', tv:'世界电视日', mountains:'国际山岳日', migrants:'国际移民日', peace2:'和平与和解日' },
+    tl: '深色主题', tn: '浅色主题', lb: 'Русский'
   }
 };
 
+const LANGS = ['ru', 'en', 'pt', 'es', 'zh'];
+
 const FIX = [
   [1,1,'ny'],
+  [1,27,'holocaust'],
+  [1,28,'peace2'],
   [2,14,'val'],
   [2,21,'lang'],
   [3,8,'w'],
@@ -236,19 +306,27 @@ const FIX = [
   [4,22,'earth'],
   [4,23,'book'],
   [5,1,'lab'],
+  [5,8,'vdayW'],
   [5,8,'mother'],
+  [5,9,'vdayE'],
   [6,1,'ch'],
   [6,5,'env'],
+  [6,8,'oceans'],
   [6,15,'father'],
   [8,12,'youth'],
   [9,21,'peace'],
   [10,1,'music'],
+  [10,1,'elderly'],
   [10,5,'teach'],
+  [10,9,'post'],
   [10,24,'un'],
   [11,19,'men'],
+  [11,21,'tv'],
   [12,3,'disab'],
   [12,5,'vol'],
   [12,10,'hr'],
+  [12,11,'mountains'],
+  [12,18,'migrants'],
   [12,25,'xm'],
   [12,31,'ev']
 ];
@@ -280,7 +358,16 @@ function hols(y) {
 }
 const holAt = j => hols(fromJDN('g', j)[0]).filter(h => h.j === j);
 
-let lang = (navigator.language || '').startsWith('ru') ? 'ru' : 'en';
+const detectLang = () => {
+  const n = (navigator.language || '').toLowerCase();
+  if (n.startsWith('ru')) return 'ru';
+  if (n.startsWith('pt')) return 'pt';
+  if (n.startsWith('es')) return 'es';
+  if (n.startsWith('zh')) return 'zh';
+  return 'en';
+};
+
+let lang = detectLang();
 let theme = null;
 let sol = 'aug';
 let S, R, PV, IV;
@@ -290,6 +377,8 @@ try {
   theme = localStorage.getItem('theme');
   sol = localStorage.getItem('sol') || sol;
 } catch (e) {}
+
+if (!LANGS.includes(lang)) lang = 'en';
 
 const T = () => L[lang];
 const ord = a => sol === 'aug'
@@ -445,7 +534,8 @@ $('#go').onclick = convert;
 $('#cg').onclick = () => { S.c = 'g'; PV = { y: S.y, m: S.m }; head(); picker(); };
 $('#cj').onclick = () => { S.c = 'j'; PV = { y: S.y, m: S.m }; head(); picker(); };
 $('#bl').onclick = () => {
-  lang = lang === 'ru' ? 'en' : 'ru';
+  const i = LANGS.indexOf(lang);
+  lang = LANGS[(i + 1) % LANGS.length];
   try { localStorage.setItem('lang', lang); } catch (e) {}
   all();
 };
