@@ -1,7 +1,7 @@
 {
   "name": "Международный фиксированный календарь",
   "short_name": "МФК",
-  "description": "Конвертер дат: григорианский, юлианский, китайский солнечный, еврейский → МФК. RU/EN/PT/ES/ZH.",
+  "description": "Конвертер дат: 6 календарей. 10 языков. v1.4",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f6f4ef",
