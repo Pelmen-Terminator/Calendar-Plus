@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Международный фиксированный календарь</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Конвертер дат между 6 календарями. 10 языков.">
+<meta name="description" content="Конвертер дат между 6 календарями. 13 языков.">
 <meta name="theme-color" content="#2f6f5e">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.json">
@@ -192,7 +192,7 @@ function fromJDN(c, J) {
   return fromJDN('g', J);
 }
 
-/* ============ Еврейский (исправлен) ============ */
+/* ============ Еврейский ============ */
 function hebrewElapsedDays(y) {
   const monthsElapsed = fl((235 * y - 234) / 19);
   const partsElapsed = 12084 + 13753 * monthsElapsed;
@@ -200,13 +200,13 @@ function hebrewElapsedDays(y) {
   if ((3 * (day + 1)) % 7 < 3) return day + 1;
   return day;
 }
-function hebrewLeap(y) { return (mod(7 * y + 1, 19)) < 7; }
+function hebrewLeap(y) { return mod(7 * y + 1, 19) < 7; }
 function hebrewYearLength(y) { return hebrewElapsedDays(y + 1) - hebrewElapsedDays(y); }
 function hebrewMonthDays(y, m) {
   if (m === 2 || m === 4 || m === 6 || m === 10 || m === 13) return 29;
   if (m === 12 && !hebrewLeap(y)) return 29;
-  if (m === 8 && hebrewYearLength(y) % 10 === 5) return 29; // Хешван короткий
-  if (m === 9 && hebrewYearLength(y) % 10 === 3) return 29; // Кислев короткий
+  if (m === 8 && hebrewYearLength(y) % 10 === 5) return 29;
+  if (m === 9 && hebrewYearLength(y) % 10 === 3) return 29;
   return 30;
 }
 const HEBREW_EPOCH = 347995;
@@ -242,15 +242,18 @@ function jdnToHebrew(J) {
   return [y, m, d];
 }
 
-/* ============ Китайский солнечный (исправлен) ============ */
+/* ============ Китайский солнечный ============ */
 const JIEQI_ZH = ['立春','雨水','惊蛰','春分','清明','谷雨','立夏','小满','芒种','夏至','小暑','大暑','立秋','处暑','白露','秋分','寒露','霜降','立冬','小雪','大雪','冬至','小寒','大寒'];
 const JIEQI_RU = ['Личунь (начало весны)','Юйшуй (дожди)','Цзинчжэ (пробуждение)','Чуньфэнь (равноденствие)','Цинмин (ясность)','Гуюй (хлебные дожди)','Лися (начало лета)','Сяомань (малое изобилие)','Манчжун (колошение)','Сячжи (солнцестояние)','Сяошу (малая жара)','Дашу (большая жара)','Лицю (начало осени)','Чушу (конец жары)','Байлу (белые росы)','Цюфэнь (равноденствие)','Ханьлу (холодные росы)','Шуанцзян (иней)','Лидун (начало зимы)','Сяосюэ (малый снег)','Дасюэ (большой снег)','Дунчжи (солнцестояние)','Сяохань (малый холод)','Дахань (большой холод)'];
 const JIEQI_EN = ['Lichun (start of spring)','Yushui (rain water)','Jingzhe (awakening)','Chunfen (equinox)','Qingming (clear)','Guyu (grain rain)','Lixia (start of summer)','Xiaoman (grain full)','Mangzhong (grain in ear)','Xiazhi (solstice)','Xiaoshu (minor heat)','Dashu (major heat)','Liqiu (start of autumn)','Chushu (end of heat)','Bailu (white dew)','Qiufen (equinox)','Hanlu (cold dew)','Shuangjiang (frost)','Lidong (start of winter)','Xiaoxue (minor snow)','Daxue (major snow)','Dongzhi (solstice)','Xiaohan (minor cold)','Dahan (major cold)'];
 const JIEQI_FR = ['Lichun (début printemps)','Yushui (pluie)','Jingzhe (réveil)','Chunfen (équinoxe)','Qingming (clarté)','Guyu (pluie de grains)','Lixia (début été)','Xiaoman (petite abondance)','Mangzhong (épiaison)','Xiazhi (solstice)','Xiaoshu (petite chaleur)','Dashu (grande chaleur)','Liqiu (début automne)','Chushu (fin chaleur)','Bailu (rosée blanche)','Qiufen (équinoxe)','Hanlu (rosée froide)','Shuangjiang (gel)','Lidong (début hiver)','Xiaoxue (petite neige)','Daxue (grande neige)','Dongzhi (solstice)','Xiaohan (petit froid)','Dahan (grand froid)'];
 const JIEQI_DE = ['Lichun (Frühlingsanfang)','Yushui (Regenwasser)','Jingzhe (Erwachen)','Chunfen (Äquinoktium)','Qingming (Klarheit)','Guyu (Getreideregen)','Lixia (Sommeranfang)','Xiaoman (kleine Fülle)','Mangzhong (Ähren)','Xiazhi (Sonnenwende)','Xiaoshu (kleine Hitze)','Dashu (große Hitze)','Liqiu (Herbstanfang)','Chushu (Ende der Hitze)','Bailu (weißer Tau)','Qiufen (Äquinoktium)','Hanlu (kalter Tau)','Shuangjiang (Frost)','Lidong (Winteranfang)','Xiaoxue (kleiner Schnee)','Daxue (großer Schnee)','Dongzhi (Sonnenwende)','Xiaohan (kleine Kälte)','Dahan (große Kälte)'];
-const JIEQI_HI = ['लिचुन (वसंत की शुरुआत)','युशुई (वर्षा जल)','जिंगझे (जागरण)','चुन्फेन (विषुव)','किंगमिंग (स्पष्टता)','गुयु (अनाज वर्षा)','लिक्सिया (गर्मी की शुरुआत)','शियाओमान (छोटी प्रचुरता)','मांगझोंग (बाली)','शियाझी (अयनांत)','शियाओशु (छोटी गर्मी)','दाशु (बड़ी गर्मी)','लिकिउ (शरद की शुरुआत)','चुशु (गर्मी का अंत)','बाईलू (सफेद ओस)','किउफेन (विषुव)','हानलू (ठंडी ओस)','शुआंगजियांग (पाला)','लिडोंग (सर्दी की शुरुआत)','शियाओशुई (छोटी बर्फ)','दाशुई (बड़ी बर्फ)','डोंगझी (अयनांत)','शियाओहान (छोटी ठंड)','दाहान (बड़ी ठंड)'];
+const JIEQI_IT = ['Lichun (inizio primavera)','Yushui (acqua piovana)','Jingzhe (risveglio)','Chunfen (equinozio)','Qingming (chiarezza)','Guyu (pioggia di grano)','Lixia (inizio estate)','Xiaoman (piccola abbondanza)','Mangzhong (spigatura)','Xiazhi (solstizio)','Xiaoshu (piccolo caldo)','Dashu (grande caldo)','Liqiu (inizio autunno)','Chushu (fine del caldo)','Bailu (rugiada bianca)','Qiufen (equinozio)','Hanlu (rugiada fredda)','Shuangjiang (gelo)','Lidong (inizio inverno)','Xiaoxue (piccola neve)','Daxue (grande neve)','Dongzhi (solstizio)','Xiaohan (piccolo freddo)','Dahan (grande freddo)'];
+const JIEQI_UK = ['Лічунь (початок весни)','Юйшуй (дощі)','Цзінчже (пробудження)','Чуньфень (рівнодення)','Цінмін (ясність)','Гуюй (хлібні дощі)','Ліся (початок літа)','Сяомань (мале достаток)','Манчжун (колосіння)','Сячжи (сонцестояння)','Сяошу (мала спека)','Дашу (велика спека)','Ліцю (початок осені)','Чушу (кінець спеки)','Байлу (білі роси)','Цюфень (рівнодення)','Ханьлу (холодні роси)','Шуанцзян (іній)','Лідун (початок зими)','Сяосюе (малий сніг)','Дасюе (великий сніг)','Дунчжи (сонцестояння)','Сяохань (малий холод)','Дахань (великий холод)'];
+const JIEQI_ID = ['Lichun (awal musim semi)','Yushui (air hujan)','Jingzhe (kebangkitan)','Chunfen (ekuinoks)','Qingming (kejernihan)','Guyu (hujan gandum)','Lixia (awal musim panas)','Xiaoman (kelimpahan kecil)','Mangzhong (bulir)','Xiazhi (solstis)','Xiaoshu (panas kecil)','Dashu (panas besar)','Liqiu (awal musim gugur)','Chushu (akhir panas)','Bailu (embun putih)','Qiufen (ekuinoks)','Hanlu (embun dingin)','Shuangjiang (embun beku)','Lidong (awal musim dingin)','Xiaoxue (salju kecil)','Daxue (salju besar)','Dongzhi (solstis)','Xiaohan (dingin kecil)','Dahan (dingin besar)'];
 const JIEQI_HE = ['ליצ\'ון','יושוי','ג\'ינגג\'ה','צ\'ונפן','צ\'ינגמינג','גויו','ליסיה','שיאומן','מנג\'ונג','שיאג\'י','שיאושו','דאשו','ליצ\'יו','צ\'ושו','באילו','צ\'יופן','חנלו','שואנג\'יאנג','לידונג','שיאושואה','דאשואה','דונג\'י','שיאוחן','דאחן'];
 const JIEQI_AR = ['لي تشون','يو شوي','جينغ تشه','تشون فن','تشينغ مينغ','قو يو','لي شيا','شياو مان','مانغ تشونغ','شيا تشي','شياو شو','دا شو','لي تشيو','تشو شو','باي لو','تشيو فن','هان لو','شوانغ جيانغ','لي دونغ','شياو شيويه','دا شيويه','دونغ تشي','شياو هان','دا هان'];
+const JIEQI_HI = ['लिचुन (वसंत की शुरुआत)','युशुई (वर्षा जल)','जिंगझे (जागरण)','चुन्फेन (विषुव)','किंगमिंग (स्पष्टता)','गुयु (अनाज वर्षा)','लिक्सिया (गर्मी की शुरुआत)','शियाओमान (छोटी प्रचुरता)','मांगझोंग (बाली)','शियाझी (अयनांत)','शियाओशु (छोटी गर्मी)','दाशु (बड़ी गर्मी)','लिकिउ (शरद की शुरुआत)','चुशु (गर्मी का अंत)','बाईलू (सफेद ओस)','किउफेन (विषुव)','हानलू (ठंडी ओस)','शुआंगजियांग (पाला)','लिडोंग (सर्दी की शुरुआत)','शियाओशुई (छोटी बर्फ)','दाशुई (बड़ी बर्फ)','डोंगझी (अयनांत)','शियाओहान (छोटी ठंड)','दाहान (बड़ी ठंड)'];
 
 const GAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
 const ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
@@ -262,6 +265,12 @@ const GAN_FR = ['Jia','Yi','Bing','Ding','Wu','Ji','Geng','Xin','Ren','Gui'];
 const ZHI_FR = ['Zi','Chou','Yin','Mao','Chen','Si','Wu','Wei','Shen','You','Xu','Hai'];
 const GAN_DE = ['Jia','Yi','Bing','Ding','Wu','Ji','Geng','Xin','Ren','Gui'];
 const ZHI_DE = ['Zi','Chou','Yin','Mao','Chen','Si','Wu','Wei','Shen','You','Xu','Hai'];
+const GAN_IT = ['Jia','Yi','Bing','Ding','Wu','Ji','Geng','Xin','Ren','Gui'];
+const ZHI_IT = ['Zi','Chou','Yin','Mao','Chen','Si','Wu','Wei','Shen','You','Xu','Hai'];
+const GAN_UK = ['Цзя','Ї','Бін','Дін','У','Цзі','Ген','Сінь','Жень','Гуй'];
+const ZHI_UK = ['Цзи','Чоу','Їнь','Мао','Чень','Си','У','Вей','Шень','Ю','Сюй','Хай'];
+const GAN_ID = ['Jia','Yi','Bing','Ding','Wu','Ji','Geng','Xin','Ren','Gui'];
+const ZHI_ID = ['Zi','Chou','Yin','Mao','Chen','Si','Wu','Wei','Shen','You','Xu','Hai'];
 const GAN_HI = ['जिया','यी','बिंग','डिंग','वू','जी','गेंग','शिन','रेन','गुई'];
 const ZHI_HI = ['ज़ी','चोउ','यिन','माओ','चेन','सी','वू','वेई','शेन','योउ','शू','हाई'];
 const GAN_HE = ['ג\'יה','יי','בינג','דינג','וו','ג\'י','גנג','שין','רן','גוי'];
@@ -289,17 +298,15 @@ function chineseYearCycle(y) {
   return { gan: idx % 10, zhi: idx % 12, idx };
 }
 
-/* ============ Индуистский (Викрам-самват, упрощённый) ============ */
-// Месяцы (Чайтра=1): Чайтра, Вайшакха, Джьештха, Ашадха, Шравана, Бхадрапада,
-// Ашвина, Картика, Маргаширша, Пауша, Магха, Пхальгуна
-const HINDU_MONTHS_DAYS = [30, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30]; // ≈ 365
-const HINDU_EPOCH = 1749630; // JDN 1 Чайтры 1 VS ≈ 24 марта 79 г. н.э.
+/* ============ Индуистский (Викрам-самват) ============ */
+const HINDU_MONTHS_DAYS = [30, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30];
+const HINDU_EPOCH = 1749630;
 function hinduIsLeap(y) { return ((y * 11 + 3) % 33) < 11; }
 function hinduToJDN(y, m, d) {
   let jdn = HINDU_EPOCH;
   for (let yy = 1; yy < y; yy++) jdn += 365 + (hinduIsLeap(yy) ? 1 : 0);
   for (let mm = 1; mm < m; mm++) jdn += HINDU_MONTHS_DAYS[mm - 1];
-  if (m === 1 && hinduIsLeap(y)) jdn += 1; // добавка в конце года
+  if (m === 1 && hinduIsLeap(y)) jdn += 1;
   return jdn + d - 1;
 }
 function jdnToHindu(J) {
@@ -312,8 +319,8 @@ function jdnToHindu(J) {
   return [y, m, rem + 1];
 }
 
-/* ============ Исламский (Хиджра) ============ */
-const ISLAMIC_EPOCH = 1948440; // JDN 1 Мухаррама 1 г. х. = 16 июля 622 г.
+/* ============ Исламский ============ */
+const ISLAMIC_EPOCH = 1948440;
 function islamicToJDN(y, m, d) {
   return d + Math.ceil(29.5 * (m - 1)) + (y - 1) * 354 + fl((3 + 11 * y) / 30) + ISLAMIC_EPOCH - 1;
 }
@@ -517,6 +524,87 @@ const L = {
     H: { ny:'Ano Novo', orx:'Natal (Ortodoxo)', lang:'Dia da Língua Materna', w:'Dia da Mulher', water:'Dia Mundial da Água', earth:'Dia da Terra', lab:'Dia do Trabalho', env:'Dia do Meio Ambiente', ch:'Dia das Crianças', youth:'Dia da Juventude', peace:'Dia da Paz', teach:'Dia do Professor', un:'Dia da ONU', hr:'Dia dos Direitos Humanos', xm:'Natal (Ocidental)', ev:'Véspera de Ano Novo', ew:'Páscoa (Ocidental)', eo:'Páscoa (Ortodoxa)', val:'Dia dos Namorados', father:'Dia dos Pais', mother:'Dia das Mães', men:'Dia Internacional do Homem', book:'Dia Mundial do Livro', health:'Dia Mundial da Saúde', space:'Dia do Voo Espacial Humano', music:'Dia Internacional da Música', disab:'Dia das Pessoas com Deficiência', vol:'Dia do Voluntário', vdayE:'Dia da Vitória (Leste)', vdayW:'Dia da Vitória (Oeste)', holocaust:'Dia da Memória do Holocausto', oceans:'Dia Mundial dos Oceanos', elderly:'Dia Internacional do Idoso', post:'Dia Mundial dos Correios', tv:'Dia Mundial da Televisão', mountains:'Dia Internacional das Montanhas', migrants:'Dia Internacional dos Migrantes', peace2:'Dia da Paz e Reconciliação', diwali:'Diwali (Hindu)', holi:'Holi (Hindu)', eidF:'Eid al-Fitr', eidA:'Eid al-Adha' },
     tl: 'Tema escuro', tn: 'Tema claro', lb: 'Idioma'
   },
+  it: {
+    ttl: 'Calendario Fisso Internazionale',
+    t_in: 'Data da convertire', t_yr: 'Anno intero',
+    s1: 'Sol: giu–lug', s2: 'Sol: lug–ago',
+    t_pk: 'Calendario', t_res: 'Risultato', t_hl: 'Festività internazionali dell\'anno',
+    cg: 'Gregoriano', cj: 'Giuliano', cc: 'Cinese', ch: 'Ebraico', ci: 'Indù', cm: 'Islamico',
+    go: 'Converti', bad: 'Questa data non esiste nel calendario scelto', badyear: 'L\'anno deve essere compreso tra 1 e 9999', badseason: 'Stagione 1–24, giorno 1–15',
+    m: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+    mg: ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'],
+    im: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Sol','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+    img: ['gennaio','febbraio','marzo','aprile','maggio','giugno','Sol','luglio','agosto','settembre','ottobre','novembre','dicembre'],
+    wd: ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'],
+    ws: ['Do','Lu','Ma','Me','Gi','Ve','Sa'], pw: ['Lu','Ma','Me','Gi','Ve','Sa','Do'],
+    leap: 'Giorno Bissextile', year: 'Giorno dell\'Anno', noweek: 'fuori settimana',
+    gr: 'Gregoriano', ju: 'Giuliano', cn: 'Cinese solare', hb: 'Ebraico', in: 'Indù', is: 'Islamico',
+    legend: '● — festività. Ogni mese inizia di domenica; passa il mouse su un giorno per vedere la data gregoriana.',
+    note: 'Tutte le date via JDN. Indù (Vikram Samvat) — modello semplificato. Islamico (Egira) — algoritmo tabellare.',
+    hm: ['Tishrei','Cheshvan','Kislev','Tevet','Shevat','Adar','Nisan','Iyar','Sivan','Tammuz','Av','Elul','Adar II'],
+    hml: ['Tishrei','Cheshvan','Kislev','Tevet','Shevat','Adar','Nisan','Iyar','Sivan','Tammuz','Av','Elul','Adar II'],
+    im2: ['Chaitra','Vaisakha','Jyeshtha','Ashadha','Shravana','Bhadrapada','Ashvin','Kartika','Margashirsha','Pausha','Magha','Phalguna'],
+    iml: ['Chaitra','Vaisakha','Jyeshtha','Ashadha','Shravana','Bhadrapada','Ashvin','Kartika','Margashirsha','Pausha','Magha','Phalguna'],
+    ism: ['Muharram','Safar','Rabi al-awwal','Rabi al-thani','Jumada al-ula','Jumada al-akhira','Rajab','Shaaban','Ramadan','Shawwal','Dhu al-Qadah','Dhu al-Hijjah'],
+    isml: ['Muharram','Safar','Rabi al-awwal','Rabi al-thani','Jumada al-ula','Jumada al-akhira','Rajab','Shaaban','Ramadan','Shawwal','Dhu al-Qadah','Dhu al-Hijjah'],
+    jq: JIEQI_IT, gan: GAN_IT, zhi: ZHI_IT,
+    H: { ny:'Capodanno', orx:'Natale (Ortodosso)', lang:'Giornata della Lingua Madre', w:'Festa della Donna', water:'Giornata Mondiale dell\'Acqua', earth:'Giornata della Terra', lab:'Festa del Lavoro', env:'Giornata dell\'Ambiente', ch:'Giornata dei Bambini', youth:'Giornata della Gioventù', peace:'Giornata della Pace', teach:'Giornata degli Insegnanti', un:'Giornata delle Nazioni Unite', hr:'Giornata dei Diritti Umani', xm:'Natale (Occidentale)', ev:'Vigilia di Capodanno', ew:'Pasqua (Occidentale)', eo:'Pasqua (Ortodossa)', val:'San Valentino', father:'Festa del Papà', mother:'Festa della Mamma', men:'Giornata Internazionale dell\'Uomo', book:'Giornata Mondiale del Libro', health:'Giornata Mondiale della Salute', space:'Giornata del Volo Spaziale Umano', music:'Giornata Internazionale della Musica', disab:'Giornata delle Persone con Disabilità', vol:'Giornata del Volontariato', vdayE:'Giorno della Vittoria (Est)', vdayW:'Giorno della Vittoria (Ovest)', holocaust:'Giorno della Memoria', oceans:'Giornata Mondiale degli Oceani', elderly:'Giornata Internazionale degli Anziani', post:'Giornata Mondiale della Posta', tv:'Giornata Mondiale della Televisione', mountains:'Giornata Internazionale della Montagna', migrants:'Giornata Internazionale dei Migranti', peace2:'Giornata della Pace e della Riconciliazione', diwali:'Diwali (Indù)', holi:'Holi (Indù)', eidF:'Eid al-Fitr', eidA:'Eid al-Adha' },
+    tl: 'Tema scuro', tn: 'Tema chiaro', lb: 'Lingua'
+  },
+  uk: {
+    ttl: 'Міжнародний фіксований календар',
+    t_in: 'Дата для переведення', t_yr: 'Повний рік',
+    s1: 'Sol: червень–липень', s2: 'Sol: липень–серпень',
+    t_pk: 'Календар', t_res: 'Результат', t_hl: 'Міжнародні свята року',
+    cg: 'Григоріанський', cj: 'Юліанський', cc: 'Китайський', ch: 'Єврейський', ci: 'Індуїстський', cm: 'Ісламський',
+    go: 'Перекласти', bad: 'Такої дати немає у вибраному календарі', badyear: 'Рік має бути від 1 до 9999', badseason: 'Сезон 1–24, день 1–15',
+    m: ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'],
+    mg: ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'],
+    im: ['Січень','Лютий','Березень','Квітень','Травень','Червень','Сол','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'],
+    img: ['січня','лютого','березня','квітня','травня','червня','Сола','липня','серпня','вересня','жовтня','листопада','грудня'],
+    wd: ['неділя','понеділок','вівторок','середа','четвер','пʼятниця','субота'],
+    ws: ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'], pw: ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'],
+    leap: 'Високосний день', year: 'День року', noweek: 'поза тижнем',
+    gr: 'Григоріанський', ju: 'Юліанський', cn: 'Китайський сонячний', hb: 'Єврейський', in: 'Індуїстський', is: 'Ісламський',
+    legend: '● — свято. Кожен місяць починається з неділі; наведіть на день, щоб побачити григоріанську дату.',
+    note: 'Усі дати перераховуються через JDN. Індуїстський (Вікрам-самват) — спрощена модель. Ісламський (Хіджра) — табличний алгоритм.',
+    hm: ['Тішрей','Хешван','Кислев','Тевет','Шват','Адар','Нісан','Іяр','Сиван','Таммуз','Ав','Елул','Адар II'],
+    hml: ['Тішрея','Хешвана','Кислева','Тевета','Швата','Адара','Нісана','Іяра','Сивана','Таммуза','Ава','Елула','Адара II'],
+    im2: ['Чайтра','Вайшакха','Джʼєштха','Ашадха','Шравана','Бхадрапада','Ашвіна','Картіка','Маргаширша','Пауша','Магха','Пхальгуна'],
+    iml: ['Чайтри','Вайшакхи','Джʼєштхи','Ашадхи','Шравани','Бхадрапади','Ашвіни','Картіки','Маргаширши','Пауши','Магхи','Пхальгуни'],
+    ism: ['Мухаррам','Сафар','Рабі аль-авваль','Рабі ас-сані','Джумада аль-уля','Джумада ас-санія','Раджаб','Шаабан','Рамадан','Шавваль','Зуль-када','Зуль-хіджа'],
+    isml: ['Мухаррама','Сафара','Рабі аль-авваля','Рабі ас-сані','Джумади аль-уля','Джумади ас-санії','Раджаба','Шаабана','Рамадана','Шавваля','Зуль-кади','Зуль-хіджі'],
+    jq: JIEQI_UK, gan: GAN_UK, zhi: ZHI_UK,
+    H: { ny:'Новий рік', orx:'Різдво (православне)', lang:'День рідної мови', w:'День жінок', water:'Всесвітній день води', earth:'День Землі', lab:'День праці', env:'День довкілля', ch:'День захисту дітей', youth:'День молоді', peace:'День миру', teach:'День учителя', un:'День ООН', hr:'День прав людини', xm:'Різдво (католицьке)', ev:'Переддень Нового року', ew:'Великдень (західний)', eo:'Великдень (православний)', val:'День святого Валентина', father:'День батька', mother:'День матері', men:'Міжнародний чоловічий день', book:'День книги', health:'День здоровʼя', space:'День космонавтики', music:'День музики', disab:'День інвалідів', vol:'День волонтера', vdayE:'День Перемоги (Схід)', vdayW:'День Перемоги (Захід)', holocaust:'День памʼяті Голокосту', oceans:'День океанів', elderly:'День людей похилого віку', post:'День пошти', tv:'День телебачення', mountains:'День гір', migrants:'День мігрантів', peace2:'День миру та примирення', diwali:'Дівалі (індуїстське)', holi:'Холі (індуїстське)', eidF:'Ураза-байрам', eidA:'Курбан-байрам' },
+    tl: 'Темна тема', tn: 'Світла тема', lb: 'Мова'
+  },
+  id: {
+    ttl: 'Kalender Tetap Internasional',
+    t_in: 'Tanggal untuk dikonversi', t_yr: 'Tahun penuh',
+    s1: 'Sol: Jun–Jul', s2: 'Sol: Jul–Agu',
+    t_pk: 'Kalender', t_res: 'Hasil', t_hl: 'Hari libur internasional tahun ini',
+    cg: 'Gregorian', cj: 'Julian', cc: 'Tionghoa', ch: 'Ibrani', ci: 'Hindu', cm: 'Islam',
+    go: 'Konversi', bad: 'Tanggal ini tidak ada di kalender yang dipilih', badyear: 'Tahun harus antara 1 dan 9999', badseason: 'Musim 1–24, hari 1–15',
+    m: ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],
+    mg: ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],
+    im: ['Januari','Februari','Maret','April','Mei','Juni','Sol','Juli','Agustus','September','Oktober','November','Desember'],
+    img: ['Januari','Februari','Maret','April','Mei','Juni','Sol','Juli','Agustus','September','Oktober','November','Desember'],
+    wd: ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],
+    ws: ['Mg','Sn','Sl','Rb','Km','Jm','Sb'], pw: ['Sn','Sl','Rb','Km','Jm','Sb','Mg'],
+    leap: 'Hari Kabisat', year: 'Hari Tahun', noweek: 'di luar minggu',
+    gr: 'Gregorian', ju: 'Julian', cn: 'Tionghoa matahari', hb: 'Ibrani', in: 'Hindu', is: 'Islam',
+    legend: '● — hari libur. Setiap bulan dimulai pada hari Minggu; arahkan kursor ke hari untuk melihat tanggal Gregorian.',
+    note: 'Semua tanggal melalui JDN. Hindu (Vikram Samvat) — model yang disederhanakan. Islam (Hijriah) — algoritma tabel.',
+    hm: ['Tishrei','Cheshvan','Kislev','Tevet','Shevat','Adar','Nisan','Iyar','Sivan','Tammuz','Av','Elul','Adar II'],
+    hml: ['Tishrei','Cheshvan','Kislev','Tevet','Shevat','Adar','Nisan','Iyar','Sivan','Tammuz','Av','Elul','Adar II'],
+    im2: ['Chaitra','Waisakha','Jyeshtha','Ashadha','Shravana','Bhadrapada','Asywin','Kartika','Margasirsha','Pausha','Magha','Phalguna'],
+    iml: ['Chaitra','Waisakha','Jyeshtha','Ashadha','Shravana','Bhadrapada','Asywin','Kartika','Margasirsha','Pausha','Magha','Phalguna'],
+    ism: ['Muharram','Safar','Rabiul Awal','Rabiul Akhir','Jumadil Awal','Jumadil Akhir','Rajab','Syaban','Ramadan','Syawal','Zulkaidah','Zulhijah'],
+    isml: ['Muharram','Safar','Rabiul Awal','Rabiul Akhir','Jumadil Awal','Jumadil Akhir','Rajab','Syaban','Ramadan','Syawal','Zulkaidah','Zulhijah'],
+    jq: JIEQI_ID, gan: GAN_ID, zhi: ZHI_ID,
+    H: { ny:'Tahun Baru', orx:'Natal (Ortodoks)', lang:'Hari Bahasa Ibu', w:'Hari Perempuan', water:'Hari Air Sedunia', earth:'Hari Bumi', lab:'Hari Buruh', env:'Hari Lingkungan Hidup', ch:'Hari Anak', youth:'Hari Pemuda', peace:'Hari Perdamaian', teach:'Hari Guru', un:'Hari PBB', hr:'Hari Hak Asasi Manusia', xm:'Natal (Barat)', ev:'Malam Tahun Baru', ew:'Paskah (Barat)', eo:'Paskah (Ortodoks)', val:'Hari Valentine', father:'Hari Ayah', mother:'Hari Ibu', men:'Hari Pria Internasional', book:'Hari Buku Sedunia', health:'Hari Kesehatan Sedunia', space:'Hari Penerbangan Antariksa', music:'Hari Musik Internasional', disab:'Hari Penyandang Disabilitas', vol:'Hari Relawan', vdayE:'Hari Kemenangan (Timur)', vdayW:'Hari Kemenangan (Barat)', holocaust:'Hari Peringatan Holocaust', oceans:'Hari Laut Sedunia', elderly:'Hari Lansia Internasional', post:'Hari Pos Sedunia', tv:'Hari Televisi Sedunia', mountains:'Hari Gunung Internasional', migrants:'Hari Migran Internasional', peace2:'Hari Perdamaian dan Rekonsiliasi', diwali:'Diwali (Hindu)', holi:'Holi (Hindu)', eidF:'Idul Fitri', eidA:'Idul Adha' },
+    tl: 'Tema gelap', tn: 'Tema terang', lb: 'Bahasa'
+  },
   zh: {
     ttl: '国际固定历',
     t_in: '要转换的日期', t_yr: '全年',
@@ -543,6 +631,33 @@ const L = {
     jq: JIEQI_ZH, gan: GAN, zhi: ZHI,
     H: { ny:'元旦', orx:'圣诞节（东正教）', lang:'母语日', w:'妇女节', water:'世界水日', earth:'地球日', lab:'劳动节', env:'世界环境日', ch:'儿童节', youth:'青年节', peace:'和平日', teach:'教师节', un:'联合国日', hr:'人权日', xm:'圣诞节（西方）', ev:'新年前夜', ew:'复活节（西方）', eo:'复活节（东正教）', val:'情人节', father:'父亲节', mother:'母亲节', men:'国际男人节', book:'世界读书日', health:'世界卫生日', space:'载人航天日', music:'国际音乐日', disab:'国际残疾人日', vol:'国际志愿者日', vdayE:'胜利日（东方）', vdayW:'胜利日（西方）', holocaust:'大屠杀纪念日', oceans:'世界海洋日', elderly:'国际老年人日', post:'世界邮政日', tv:'世界电视日', mountains:'国际山岳日', migrants:'国际移民日', peace2:'和平与和解日', diwali:'排灯节', holi:'洒红节', eidF:'开斋节', eidA:'古尔邦节' },
     tl: '深色主题', tn: '浅色主题', lb: '语言'
+  },
+  hi: {
+    ttl: 'अंतर्राष्ट्रीय निश्चित कैलेंडर',
+    t_in: 'परिवर्तित करने की तिथि', t_yr: 'पूरा वर्ष',
+    s1: 'Sol: जून–जुलाई', s2: 'Sol: जुलाई–अगस्त',
+    t_pk: 'कैलेंडर', t_res: 'परिणाम', t_hl: 'वर्ष के अंतर्राष्ट्रीय अवकाश',
+    cg: 'ग्रेगोरियन', cj: 'जूलियन', cc: 'चीनी', ch: 'हिब्रू', ci: 'हिंदू', cm: 'इस्लामी',
+    go: 'परिवर्तित करें', bad: 'चयनित कैलेंडर में यह तिथि मौजूद नहीं है', badyear: 'वर्ष 1 से 9999 के बीच होना चाहिए', badseason: 'ऋतु 1–24, दिन 1–15',
+    m: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
+    mg: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
+    im: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','Sol','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
+    img: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','Sol','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
+    wd: ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'],
+    ws: ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'], pw: ['सोम','मंगल','बुध','गुरु','शुक्र','शनि','रवि'],
+    leap: 'अधिवर्ष दिवस', year: 'वर्ष दिवस', noweek: 'सप्ताह से बाहर',
+    gr: 'ग्रेगोरियन', ju: 'जूलियन', cn: 'चीनी सौर', hb: 'हिब्रू', in: 'हिंदू', is: 'इस्लामी',
+    legend: '● — अवकाश। प्रत्येक माह रविवार से आरंभ होता है; ग्रेगोरियन तिथि देखने के लिए दिन पर हॉवर करें।',
+    note: 'सभी तिथियाँ JDN के माध्यम से। हिंदू (विक्रम संवत) — सरलीकृत मॉडल। इस्लामी (हिजरी) — सारणीबद्ध एल्गोरिद्म।',
+    hm: ['तिश्रेई','चेशवान','किसलेव','तेवेत','शेवात','अदार','निसान','इयार','सिवान','तम्मूज़','अव','एलुल','अदार II'],
+    hml: ['तिश्रेई','चेशवान','किसलेव','तेवेत','शेवात','अदार','निसान','इयार','सिवान','तम्मूज़','अव','एलुल','अदार II'],
+    im2: ['चैत्र','वैशाख','ज्येष्ठ','आषाढ़','श्रावण','भाद्रपद','आश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'],
+    iml: ['चैत्र','वैशाख','ज्येष्ठ','आषाढ़','श्रावण','भाद्रपद','आश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'],
+    ism: ['मुहर्रम','सफ़र','रबी अल-अव्वल','रबी अल-सानी','जुमादा अल-उला','जुमादा अल-अखिरा','रजब','शाबान','रमज़ान','शव्वाल','ज़ुल-क़ादा','ज़ुल-हिज्जा'],
+    isml: ['मुहर्रम','सफ़र','रबी अल-अव्वल','रबी अल-सानी','जुमादा अल-उला','जुमादा अल-अखिरा','रजब','शाबान','रमज़ान','शव्वाल','ज़ुल-क़ादा','ज़ुल-हिज्जा'],
+    jq: JIEQI_HI, gan: GAN_HI, zhi: ZHI_HI,
+    H: { ny:'नया साल', orx:'क्रिसमस (ऑर्थोडॉक्स)', lang:'मातृभाषा दिवस', w:'महिला दिवस', water:'विश्व जल दिवस', earth:'पृथ्वी दिवस', lab:'मजदूर दिवस', env:'पर्यावरण दिवस', ch:'बाल दिवस', youth:'युवा दिवस', peace:'शांति दिवस', teach:'शिक्षक दिवस', un:'संयुक्त राष्ट्र दिवस', hr:'मानवाधिकार दिवस', xm:'क्रिसमस (पश्चिमी)', ev:'नए साल की पूर्वसंध्या', ew:'ईस्टर (पश्चिमी)', eo:'ईस्टर (ऑर्थोडॉक्स)', val:'वैलेंटाइन दिवस', father:'पितृ दिवस', mother:'मातृ दिवस', men:'अंतर्राष्ट्रीय पुरुष दिवस', book:'विश्व पुस्तक दिवस', health:'विश्व स्वास्थ्य दिवस', space:'मानव अंतरिक्ष उड़ान दिवस', music:'अंतर्राष्ट्रीय संगीत दिवस', disab:'विकलांग दिवस', vol:'स्वयंसेवक दिवस', vdayE:'विजय दिवस (पूर्व)', vdayW:'विजय दिवस (पश्चिम)', holocaust:'प्रलय स्मृति दिवस', oceans:'विश्व महासागर दिवस', elderly:'वृद्धजन दिवस', post:'विश्व डाक दिवस', tv:'विश्व टेलीविजन दिवस', mountains:'अंतर्राष्ट्रीय पर्वत दिवस', migrants:'अंतर्राष्ट्रीय प्रवासी दिवस', peace2:'शांति और सुलह दिवस', diwali:'दिवाली', holi:'होली', eidF:'ईद उल-फ़ितर', eidA:'ईद उल-अज़हा' },
+    tl: 'गहरा थीम', tn: 'हल्का थीम', lb: 'भाषा'
   },
   he: {
     ttl: 'לוח השנה הקבוע הבינלאומי',
@@ -597,47 +712,23 @@ const L = {
     jq: JIEQI_AR, gan: GAN_AR, zhi: ZHI_AR,
     H: { ny:'رأس السنة', orx:'عيد الميلاد (الأرثوذكسي)', lang:'يوم اللغة الأم', w:'يوم المرأة', water:'اليوم العالمي للمياه', earth:'يوم الأرض', lab:'عيد العمال', env:'يوم البيئة', ch:'يوم الطفل', youth:'يوم الشباب', peace:'يوم السلام', teach:'يوم المعلم', un:'يوم الأمم المتحدة', hr:'يوم حقوق الإنسان', xm:'عيد الميلاد (الغربي)', ev:'ليلة رأس السنة', ew:'عيد الفصح (الغربي)', eo:'عيد الفصح (الأرثوذكسي)', val:'عيد الحب', father:'عيد الأب', mother:'عيد الأم', men:'اليوم العالمي للرجل', book:'اليوم العالمي للكتاب', health:'يوم الصحة العالمي', space:'يوم رحلات الفضاء', music:'اليوم العالمي للموسيقى', disab:'اليوم العالمي للمعاقين', vol:'يوم المتطوعين', vdayE:'يوم النصر (الشرق)', vdayW:'يوم النصر (الغرب)', holocaust:'يوم ذكرى المحرقة', oceans:'اليوم العالمي للمحيطات', elderly:'يوم المسنين', post:'اليوم العالمي للبريد', tv:'اليوم العالمي للتلفزيون', mountains:'اليوم الدولي للجبال', migrants:'اليوم الدولي للمهاجرين', peace2:'يوم السلام والمصالحة', diwali:'ديوالي', holi:'هولي', eidF:'عيد الفطر', eidA:'عيد الأضحى' },
     tl: 'المظهر الداكن', tn: 'المظهر الفاتح', lb: 'اللغة'
-  },
-  hi: {
-    ttl: 'अंतर्राष्ट्रीय निश्चित कैलेंडर',
-    t_in: 'परिवर्तित करने की तिथि', t_yr: 'पूरा वर्ष',
-    s1: 'Sol: जून–जुलाई', s2: 'Sol: जुलाई–अगस्त',
-    t_pk: 'कैलेंडर', t_res: 'परिणाम', t_hl: 'वर्ष के अंतर्राष्ट्रीय अवकाश',
-    cg: 'ग्रेगोरियन', cj: 'जूलियन', cc: 'चीनी', ch: 'हिब्रू', ci: 'हिंदू', cm: 'इस्लामी',
-    go: 'परिवर्तित करें', bad: 'चयनित कैलेंडर में यह तिथि मौजूद नहीं है', badyear: 'वर्ष 1 से 9999 के बीच होना चाहिए', badseason: 'ऋतु 1–24, दिन 1–15',
-    m: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
-    mg: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
-    im: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','Sol','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
-    img: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','Sol','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
-    wd: ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'],
-    ws: ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'], pw: ['सोम','मंगल','बुध','गुरु','शुक्र','शनि','रवि'],
-    leap: 'अधिवर्ष दिवस', year: 'वर्ष दिवस', noweek: 'सप्ताह से बाहर',
-    gr: 'ग्रेगोरियन', ju: 'जूलियन', cn: 'चीनी सौर', hb: 'हिब्रू', in: 'हिंदू', is: 'इस्लामी',
-    legend: '● — अवकाश। प्रत्येक माह रविवार से आरंभ होता है; ग्रेगोरियन तिथि देखने के लिए दिन पर हॉवर करें।',
-    note: 'सभी तिथियाँ JDN के माध्यम से। हिंदू (विक्रम संवत) — सरलीकृत मॉडल। इस्लामी (हिजरी) — सारणीबद्ध एल्गोरिद्म।',
-    hm: ['तिश्रेई','चेशवान','किसलेव','तेवेत','शेवात','अदार','निसान','इयार','सिवान','तम्मूज़','अव','एलुल','अदार II'],
-    hml: ['तिश्रेई','चेशवान','किसलेव','तेवेत','शेवात','अदार','निसान','इयार','सिवान','तम्मूज़','अव','एलुल','अदार II'],
-    im2: ['चैत्र','वैशाख','ज्येष्ठ','आषाढ़','श्रावण','भाद्रपद','आश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'],
-    iml: ['चैत्र','वैशाख','ज्येष्ठ','आषाढ़','श्रावण','भाद्रपद','आश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'],
-    ism: ['मुहर्रम','सफ़र','रबी अल-अव्वल','रबी अल-सानी','जुमादा अल-उला','जुमादा अल-अखिरा','रजब','शाबान','रमज़ान','शव्वाल','ज़ुल-क़ादा','ज़ुल-हिज्जा'],
-    isml: ['मुहर्रम','सफ़र','रबी अल-अव्वल','रबी अल-सानी','जुमादा अल-उला','जुमादा अल-अखिरा','रजब','शाबान','रमज़ान','शव्वाल','ज़ुल-क़ादा','ज़ुल-हिज्जा'],
-    jq: JIEQI_HI, gan: GAN_HI, zhi: ZHI_HI,
-    H: { ny:'नया साल', orx:'क्रिसमस (ऑर्थोडॉक्स)', lang:'मातृभाषा दिवस', w:'महिला दिवस', water:'विश्व जल दिवस', earth:'पृथ्वी दिवस', lab:'मजदूर दिवस', env:'पर्यावरण दिवस', ch:'बाल दिवस', youth:'युवा दिवस', peace:'शांति दिवस', teach:'शिक्षक दिवस', un:'संयुक्त राष्ट्र दिवस', hr:'मानवाधिकार दिवस', xm:'क्रिसमस (पश्चिमी)', ev:'नए साल की पूर्वसंध्या', ew:'ईस्टर (पश्चिमी)', eo:'ईस्टर (ऑर्थोडॉक्स)', val:'वैलेंटाइन दिवस', father:'पितृ दिवस', mother:'मातृ दिवस', men:'अंतर्राष्ट्रीय पुरुष दिवस', book:'विश्व पुस्तक दिवस', health:'विश्व स्वास्थ्य दिवस', space:'मानव अंतरिक्ष उड़ान दिवस', music:'अंतर्राष्ट्रीय संगीत दिवस', disab:'विकलांग दिवस', vol:'स्वयंसेवक दिवस', vdayE:'विजय दिवस (पूर्व)', vdayW:'विजय दिवस (पश्चिम)', holocaust:'प्रलय स्मृति दिवस', oceans:'विश्व महासागर दिवस', elderly:'वृद्धजन दिवस', post:'विश्व डाक दिवस', tv:'विश्व टेलीविजन दिवस', mountains:'अंतर्राष्ट्रीय पर्वत दिवस', migrants:'अंतर्राष्ट्रीय प्रवासी दिवस', peace2:'शांति और सुलह दिवस', diwali:'दिवाली', holi:'होली', eidF:'ईद उल-फ़ितर', eidA:'ईद उल-अज़हा' },
-    tl: 'गहरा थीम', tn: 'हल्का थीम', lb: 'भाषा'
   }
 };
 
 const LANGS = [
-  { code: 'ru', flag: '🇷🇺', name: 'Русский',   dir: 'ltr' },
-  { code: 'en', flag: '🇬🇧', name: 'English',   dir: 'ltr' },
-  { code: 'de', flag: '🇩🇪', name: 'Deutsch',   dir: 'ltr' },
-  { code: 'fr', flag: '🇫🇷', name: 'Français',  dir: 'ltr' },
-  { code: 'es', flag: '🇪🇸', name: 'Español',   dir: 'ltr' },
-  { code: 'pt', flag: '🇧🇷', name: 'Português', dir: 'ltr' },
-  { code: 'zh', flag: '🇨🇳', name: '中文',       dir: 'ltr' },
-  { code: 'hi', flag: '🇮🇳', name: 'हिन्दी',      dir: 'ltr' },
-  { code: 'he', flag: '🇮🇱', name: 'עברית',     dir: 'rtl' },
-  { code: 'ar', flag: '🇸🇦', name: 'العربية',   dir: 'rtl' }
+  { code: 'ru', flag: '🇷🇺', name: 'Русский',        dir: 'ltr' },
+  { code: 'en', flag: '🇬🇧', name: 'English',        dir: 'ltr' },
+  { code: 'de', flag: '🇩🇪', name: 'Deutsch',        dir: 'ltr' },
+  { code: 'fr', flag: '🇫🇷', name: 'Français',       dir: 'ltr' },
+  { code: 'it', flag: '🇮🇹', name: 'Italiano',       dir: 'ltr' },
+  { code: 'es', flag: '🇪🇸', name: 'Español',        dir: 'ltr' },
+  { code: 'pt', flag: '🇧🇷', name: 'Português',      dir: 'ltr' },
+  { code: 'uk', flag: '🇺🇦', name: 'Українська',     dir: 'ltr' },
+  { code: 'id', flag: '🇮🇩', name: 'Bahasa Indonesia', dir: 'ltr' },
+  { code: 'zh', flag: '🇨🇳', name: '中文',            dir: 'ltr' },
+  { code: 'hi', flag: '🇮🇳', name: 'हिन्दी',           dir: 'ltr' },
+  { code: 'he', flag: '🇮🇱', name: 'עברית',          dir: 'rtl' },
+  { code: 'ar', flag: '🇸🇦', name: 'العربية',        dir: 'rtl' }
 ];
 
 const FIX = [
@@ -658,12 +749,10 @@ const cache = {};
 function hols(y) {
   if (cache[y]) return cache[y];
   const r = FIX.map(([m, d, k]) => ({ j: toJDN('g', y, m, d), k }));
-  // Православное Рождество (7 янв)
   [y - 1, y].forEach(jy => {
     const j = toJDN('j', jy, 12, 25);
     if (fromJDN('g', j)[0] === y) r.push({ j, k: 'orx' });
   });
-  // Пасха западная
   let a = y % 19, b = fl(y / 100), c = y % 100, d = fl(b / 4), e = b % 4,
       f = fl((b + 8) / 25), g = fl((b - f + 1) / 3),
       h = (19 * a + b - d - g + 15) % 30,
@@ -672,25 +761,19 @@ function hols(y) {
       m = fl((a + 11 * h + 22 * l) / 451),
       n = h + l - 7 * m + 114;
   r.push({ j: toJDN('g', y, fl(n / 31), n % 31 + 1), k: 'ew' });
-  // Пасха православная
   let a2 = y % 4, b2 = y % 7, c2 = y % 19,
       d2 = (19 * c2 + 15) % 30,
       e2 = (2 * a2 + 4 * b2 - d2 + 34) % 7,
       n2 = d2 + e2 + 114;
   const oj = toJDN('j', y, fl(n2 / 31), n2 % 31 + 1);
   if (fromJDN('g', oj)[0] === y) r.push({ j: oj, k: 'eo' });
-  // Дивали (новолуние Картики — приблизительно: 15-й день после новолуния в окт/ноя)
-  // Упрощённо: Дивали ≈ 19 октября + смещение по лунному циклу
   const diwaliJ = toJDN('g', y, 10, 19) + mod(y * 11, 19) - 9;
   r.push({ j: diwaliJ, k: 'diwali' });
-  // Холи (полнолуние Пхальгуны ≈ март)
   const holiJ = toJDN('g', y, 3, 6) + mod(y * 7, 11) - 5;
   r.push({ j: holiJ, k: 'holi' });
-  // Ураза-байрам (1 шавваля) и Курбан-байрам (10 зуль-хиджа)
   const islY = jdnToIslamic(toJDN('g', y, 6, 15))[0];
   r.push({ j: islamicToJDN(islY, 10, 1), k: 'eidF' });
   r.push({ j: islamicToJDN(islY, 12, 10), k: 'eidA' });
-  // Фильтр: только в этом григорианском году
   const filtered = r.filter(h => fromJDN('g', h.j)[0] === y);
   filtered.sort((p, q) => p.j - q.j);
   return cache[y] = filtered;
@@ -701,7 +784,10 @@ const holAt = j => hols(fromJDN('g', j)[0]).filter(h => h.j === j);
 const detectLang = () => {
   const n = (navigator.language || '').toLowerCase();
   if (n.startsWith('ru')) return 'ru';
+  if (n.startsWith('uk')) return 'uk';
   if (n.startsWith('de')) return 'de';
+  if (n.startsWith('it')) return 'it';
+  if (n.startsWith('id') || n.startsWith('in')) return 'id';
   if (n.startsWith('pt')) return 'pt';
   if (n.startsWith('es')) return 'es';
   if (n.startsWith('zh')) return 'zh';
@@ -845,7 +931,7 @@ function buildMonthOptions() {
   if (+sel.value !== cur) sel.value = cur;
 }
 
-function buildWeekHeader(t, cal) {
+function buildWeekHeader(t) {
   return t.pw.map(w => `<div class="h">${w}</div>`).join('');
 }
 
@@ -853,7 +939,6 @@ function picker() {
   const t = T();
   const c = S.c;
   const cal = $('#pc');
-  // RTL для календаря
   const cur = LANGS.find(l => l.code === lang);
   cal.setAttribute('dir', cur.dir);
   if (c === 'c') {
@@ -912,7 +997,6 @@ function picker() {
     cal.innerHTML = h;
     return;
   }
-  // Григорианский и юлианский
   const { y, m } = PV;
   const s = toJDN(c, y, m, 1);
   const nx = m === 12 ? toJDN(c, y + 1, 1, 1) : toJDN(c, y, m + 1, 1);
@@ -1029,7 +1113,6 @@ function convert() {
   if (c === 'm' && (m < 1 || m > 12)) { $('#er').textContent = t.bad; return; }
   let j;
   try { j = toJDN(c, y, m, d); } catch (e) { $('#er').textContent = t.bad; return; }
-  // Валидация через обратное преобразование
   if (c === 'g' || c === 'j' || c === 'h' || c === 'i' || c === 'm') {
     const b = fromJDN(c, j);
     if (b[0] !== y || b[1] !== m || b[2] !== d) { $('#er').textContent = t.bad; return; }
